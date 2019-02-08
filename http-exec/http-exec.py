@@ -8,7 +8,7 @@ import subprocess
 class Server(http.server.SimpleHTTPRequestHandler):
     def do_GET(self): 
         # Проверка аутентификации
-        if os.environ.get('HTTP_EXEC_USE_AUTHENTICATION') is None or os.environ['HTTP_EXEC_USE_AUTHENTICATION'].lower == "true" or os.environ['HTTP_EXEC_USE_AUTHENTICATION'].lower == "yes":
+        if not (os.environ.get('HTTP_EXEC_USE_AUTHENTICATION') is not None and (os.environ['HTTP_EXEC_USE_AUTHENTICATION'].lower == "false" or os.environ['HTTP_EXEC_USE_AUTHENTICATION'].lower == "no")):
             try:
                 with open(os.environ['HTTP_EXEC_SECRET_PATH']) as f:
                     secret = f.readline()
@@ -28,9 +28,7 @@ class Server(http.server.SimpleHTTPRequestHandler):
         execpath = os.environ['HTTP_EXEC_BINARY_FOLDER_PATH']
         if execpath.endswith('/'):
             execpath = execpath[:-1]
-        if self.path.count('/') > 1:
-            self.send_error(404, 'Not found')
-        elif os.path.isfile(execpath+self.path) and os.access(execpath+self.path, os.X_OK):
+        if self.path.count('/') < 2 and os.path.isfile(execpath+self.path) and os.access(execpath+self.path, os.X_OK):
             pipe = subprocess.Popen([execpath+self.path],stdout=subprocess.PIPE,shell=True)
             self.send_response(200, 'OK')
             self.send_header('Content-type', 'application/octet-stream')
