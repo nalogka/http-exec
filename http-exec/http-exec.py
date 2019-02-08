@@ -27,7 +27,7 @@ class Server(http.server.SimpleHTTPRequestHandler):
                         authenticated = True
             if not authenticated:
                 self.send_error(403, 'Unauthorized')
-        if not use_authentication or (use_authentication and authenticated):
+        if not use_authentication or authenticated:
             execpath = os.environ['HTTP_EXEC_BINARY_FOLDER_PATH']
             if execpath.endswith('/'):
                 execpath = execpath[:-1]
