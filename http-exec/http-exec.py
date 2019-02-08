@@ -11,9 +11,7 @@ class Server(http.server.SimpleHTTPRequestHandler):
         if not (os.environ.get('HTTP_EXEC_USE_AUTHENTICATION') is not None and (os.environ['HTTP_EXEC_USE_AUTHENTICATION'].lower == "false" or os.environ['HTTP_EXEC_USE_AUTHENTICATION'].lower == "no")):
             try:
                 with open(os.environ['HTTP_EXEC_SECRET_PATH']) as f:
-                    secret = f.readline()
-                    if secret.endswith('\n'):
-                        secret = secret[:-1]
+                    secret = f.readline().rstrip('\n')
                     f.close()
             except:
                 secret = ""
@@ -25,9 +23,7 @@ class Server(http.server.SimpleHTTPRequestHandler):
             if not authenticated:
                 self.send_error(403, 'Unauthorized')
                 return 0
-        execpath = os.environ['HTTP_EXEC_BINARY_FOLDER_PATH']
-        if execpath.endswith('/'):
-            execpath = execpath[:-1]
+        execpath = os.environ['HTTP_EXEC_BINARY_FOLDER_PATH'].rstrip('/')
         if self.path.count('/') < 2 and os.path.isfile(execpath+self.path) and os.access(execpath+self.path, os.X_OK):
             pipe = subprocess.Popen([execpath+self.path],stdout=subprocess.PIPE,shell=True)
             self.send_response(200, 'OK')
