@@ -24,7 +24,7 @@ class Server(http.server.SimpleHTTPRequestHandler):
                 self.send_error(403, 'Unauthorized')
                 return 0
         execpath = os.environ['HTTP_EXEC_BINARY_FOLDER_PATH'].rstrip('/')
-        if self.path.count('/') < 2 and os.path.isfile(execpath+self.path) and os.access(execpath+self.path, os.X_OK):
+        if self.path.count('/') < 2 and os.path.isfile(execpath+self.path) and os.access(execpath+self.path, os.X_OK) and (self.path != '/http-exec.py'):
             pipe = subprocess.Popen([execpath+self.path],stdout=subprocess.PIPE,shell=True)
             self.send_response(200, 'OK')
             self.send_header('Content-type', 'application/octet-stream')
