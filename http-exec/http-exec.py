@@ -8,7 +8,7 @@ import subprocess
 class Server(http.server.SimpleHTTPRequestHandler):
     def do_GET(self): 
         # Проверка аутентификации
-        if not (os.environ.get('HTTP_EXEC_USE_AUTHENTICATION') is not None and (os.environ['HTTP_EXEC_USE_AUTHENTICATION'].lower == "false" or os.environ['HTTP_EXEC_USE_AUTHENTICATION'].lower == "no")):
+        if not (os.environ.get('HTTP_EXEC_USE_AUTHENTICATION') is not None and (os.environ['HTTP_EXEC_USE_AUTHENTICATION'].lower() == "false" or os.environ['HTTP_EXEC_USE_AUTHENTICATION'].lower() == "no")):
             try:
                 with open(os.environ['HTTP_EXEC_SECRET_PATH']) as f:
                     secret = f.readline().rstrip('\n')
